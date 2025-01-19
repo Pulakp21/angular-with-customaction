@@ -1,0 +1,25 @@
+name: Security Vulnerability Scan and Fix
+
+on:
+  schedule:
+    - cron: '0 3 * * 0' # Runs every Sunday at 3:00 AM
+  workflow_dispatch: # Allows manual triggering of the workflow
+
+jobs:
+  security-scan:
+    runs-on: ubuntu-latest
+    permissions:
+      security-events: write
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Run Universal Dependabot Manager
+        id: dependabot-action
+        uses: Pulakp21/universal-dependabot-action@v1.0.11
+        with:
+          github_token: ${{ secrets.MY_PERSONAL_TOKEN }} # ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Log Results
+        run: echo "Processed ${{ steps.dependabot-action.outputs.alerts_processed }} security vulnerabilities."
+      
